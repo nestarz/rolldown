@@ -2,7 +2,7 @@
   "config": {
     "input": [
       {
-        "name": "identity_js",
+        "name": "identity",
         "import": "identity.js"
       },
       {
@@ -34,7 +34,7 @@
         "import": "identity-two-args.js"
       },
       {
-        "name": "reassign_js",
+        "name": "reassign",
         "import": "reassign.js"
       },
       {

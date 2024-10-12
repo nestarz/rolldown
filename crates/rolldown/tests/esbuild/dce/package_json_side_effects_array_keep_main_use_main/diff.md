@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Diff
 ## /out.js
 ### esbuild
@@ -12,19 +11,14 @@ console.log("unused import");
 ### rolldown
 ```js
 
-//#region src/entry.js
-console.log("unused import");
-
-//#endregion
-
 ```
 ### diff
 ```diff
 ===================================================================
 --- esbuild	/out.js
-+++ rolldown	src_entry_js.js
-@@ -1,2 +1,1 @@
++++ rolldown	
+@@ -1,2 +0,0 @@
 -console.log("this should be kept");
- console.log("unused import");
+-console.log("unused import");
 
 ```

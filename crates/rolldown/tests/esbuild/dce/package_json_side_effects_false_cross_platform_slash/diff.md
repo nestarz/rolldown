@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Diff
 ## /out.js
 ### esbuild
@@ -12,19 +11,14 @@ console.log("bar");
 ### rolldown
 ```js
 
-//#region node_modules/demo-pkg/foo.js
-console.log("foo");
-
-//#endregion
-
 ```
 ### diff
 ```diff
 ===================================================================
 --- esbuild	/out.js
-+++ rolldown	src_entry_js.js
-@@ -1,2 +1,1 @@
- console.log("foo");
++++ rolldown	
+@@ -1,2 +0,0 @@
+-console.log("foo");
 -console.log("bar");
 
 ```

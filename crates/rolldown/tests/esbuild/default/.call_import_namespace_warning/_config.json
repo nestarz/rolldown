@@ -4,11 +4,11 @@
   "config": {
     "input": [
       {
-        "name": "js_js",
+        "name": "js",
         "import": "js.js"
       },
       {
-        "name": "ts_ts",
+        "name": "ts",
         "import": "ts.ts"
       },
       {

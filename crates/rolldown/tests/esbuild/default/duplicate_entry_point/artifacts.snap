@@ -6,6 +6,12 @@ source: crates/rolldown_testing/src/integration_test.rs
 ## entry.js
 
 ```js
+import "./entry2.js";
+
+```
+## entry2.js
+
+```js
 
 //#region entry.js
 console.log(123);
@@ -15,12 +21,6 @@ console.log(123);
 ## entry2_js.js
 
 ```js
-import "./entry.js";
-
-```
-## entry_js.js
-
-```js
-import "./entry.js";
+import "./entry2.js";
 
 ```

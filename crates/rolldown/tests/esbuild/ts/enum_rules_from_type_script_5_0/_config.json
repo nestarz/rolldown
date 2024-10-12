@@ -2,7 +2,7 @@
   "config": {
     "input": [
       {
-        "name": "supported_ts",
+        "name": "supported",
         "import": "supported.ts"
       },
       {

@@ -108,7 +108,7 @@ keep(1, 2);
 
 //#endregion
 ```
-## identity_js.js
+## identity.js
 
 ```js
 
@@ -266,7 +266,7 @@ keep(1);
 
 //#endregion
 ```
-## reassign_js.js
+## reassign.js
 
 ```js
 

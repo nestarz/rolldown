@@ -31,7 +31,7 @@ console.log(TemplateExpressions.NULL, TemplateExpressions.TRUE, TemplateExpressi
 
 //#endregion
 ```
-## supported_ts.js
+## supported.js
 
 ```js
 

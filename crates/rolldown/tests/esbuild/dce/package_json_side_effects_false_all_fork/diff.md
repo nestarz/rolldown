@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Diff
 ## /out.js
 ### esbuild
@@ -35,18 +34,13 @@ Promise.resolve().then(() => (init_a(), a_exports)).then((x) => assert(x.foo ===
 ### rolldown
 ```js
 
-//#region src/entry.js
-import("./a_index.js").then((x) => assert(x.foo === "foo"));
-
-//#endregion
-
 ```
 ### diff
 ```diff
 ===================================================================
 --- esbuild	/out.js
-+++ rolldown	src_entry_js.js
-@@ -1,21 +1,1 @@
++++ rolldown	
+@@ -1,21 +0,0 @@
 -var foo;
 -var init_c = __esm({
 -    "Users/user/project/node_modules/c/index.js"() {
@@ -68,6 +62,5 @@ import("./a_index.js").then((x) => assert(x.foo === "foo"));
 -    }
 -});
 -Promise.resolve().then(() => (init_a(), a_exports)).then(x => assert(x.foo === "foo"));
-+import("./a_index.js").then(x => assert(x.foo === "foo"));
 
 ```

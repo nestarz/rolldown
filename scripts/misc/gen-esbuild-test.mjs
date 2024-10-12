@@ -313,13 +313,13 @@ for (let i = 0, len = tree.rootNode.namedChildren.length; i < len; i++) {
       if (path.isAbsolute(normalizedName)) {
         normalizedName = normalizedName.slice(1)
       }
-      return {
-        name: normalizedName
+      let [name, _] = normalizedName
           .split('/')
           .filter(Boolean)
           .join('_')
-          .split('.')
-          .join('_'),
+          .split('.');
+      return {
+        name,
         import: normalizedName,
       }
     })

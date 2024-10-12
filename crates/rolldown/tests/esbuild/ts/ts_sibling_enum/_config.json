@@ -2,15 +2,15 @@
   "config": {
     "input": [
       {
-        "name": "number_ts",
+        "name": "number",
         "import": "number.ts"
       },
       {
-        "name": "string_ts",
+        "name": "string",
         "import": "string.ts"
       },
       {
-        "name": "propagation_ts",
+        "name": "propagation",
         "import": "propagation.ts"
       },
       {

@@ -2,8 +2,8 @@
 ## /out.js
 ### esbuild
 ```js
-// entry.ts
-var foo = bar();
+// Users/user/project/src/entry.js
+console.log("unused import");
 ```
 ### rolldown
 ```js
@@ -15,6 +15,6 @@ var foo = bar();
 --- esbuild	/out.js
 +++ rolldown	
 @@ -1,1 +0,0 @@
--var foo = bar();
+-console.log("unused import");
 
 ```

@@ -2,11 +2,11 @@
   "config": {
     "input": [
       {
-        "name": "replaced_js",
+        "name": "replaced",
         "import": "replaced.js"
       },
       {
-        "name": "kept_js",
+        "name": "kept",
         "import": "kept.js"
       },
       {

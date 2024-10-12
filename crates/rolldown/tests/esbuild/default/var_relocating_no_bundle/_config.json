@@ -6,15 +6,15 @@
         "import": "top-level.js"
       },
       {
-        "name": "nested_js",
+        "name": "nested",
         "import": "nested.js"
       },
       {
-        "name": "let_js",
+        "name": "let",
         "import": "let.js"
       },
       {
-        "name": "function_js",
+        "name": "function",
         "import": "function.js"
       },
       {

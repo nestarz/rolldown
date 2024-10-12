@@ -14,35 +14,19 @@ console.log(require_src());
 ```
 ### rolldown
 ```js
-import { default as assert } from "node:assert";
-
-
-//#region index.js
-var require_require_parent_dir_common_js_index = __commonJS({ "index.js"(exports, module) {
-	module.exports = 123;
-} });
-
-//#endregion
-//#region dir/entry.js
-assert.deepEqual(require_require_parent_dir_common_js_index(), 123);
-
-//#endregion
 
 ```
 ### diff
 ```diff
 ===================================================================
 --- esbuild	/out.js
-+++ rolldown	dir_entry_js.js
-@@ -1,6 +1,6 @@
++++ rolldown	
+@@ -1,6 +0,0 @@
 -var require_src = __commonJS({
 -    "Users/user/project/src/index.js"(exports, module) {
-+var require_require_parent_dir_common_js_index = __commonJS({
-+    "index.js"(exports, module) {
-         module.exports = 123;
-     }
- });
+-        module.exports = 123;
+-    }
+-});
 -console.log(require_src());
-+console.log(require_require_parent_dir_common_js_index());
 
 ```

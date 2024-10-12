@@ -2,11 +2,11 @@
   "config": {
     "input": [
       {
-        "name": "a_entry_js",
+        "name": "a",
         "import": "a/entry.js"
       },
       {
-        "name": "b_entry_js",
+        "name": "b",
         "import": "b/entry.js"
       }
     ]

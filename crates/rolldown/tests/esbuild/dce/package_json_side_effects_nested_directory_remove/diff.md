@@ -1,9 +1,9 @@
 # Diff
-## entry.js
+## /out.js
 ### esbuild
 ```js
-// what
-foo();
+// Users/user/project/src/entry.js
+console.log("unused import");
 ```
 ### rolldown
 ```js
@@ -12,9 +12,9 @@ foo();
 ### diff
 ```diff
 ===================================================================
---- esbuild	entry.js
+--- esbuild	/out.js
 +++ rolldown	
 @@ -1,1 +0,0 @@
--foo();
+-console.log("unused import");
 
 ```

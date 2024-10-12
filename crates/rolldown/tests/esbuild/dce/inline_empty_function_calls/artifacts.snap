@@ -104,7 +104,7 @@ DROP();
 
 //#endregion
 ```
-## empty_js.js
+## empty.js
 
 ```js
 
@@ -175,7 +175,7 @@ keep(1);
 
 //#endregion
 ```
-## reassign_js.js
+## reassign.js
 
 ```js
 

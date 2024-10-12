@@ -8,7 +8,7 @@ source: crates/rolldown_testing/src/integration_test.rs
 ```js
 
 ```
-## kept_js.js
+## kept.js
 
 ```js
 
@@ -17,7 +17,7 @@ console.log(import.meta.y);
 
 //#endregion
 ```
-## replaced_js.js
+## replaced.js
 
 ```js
 

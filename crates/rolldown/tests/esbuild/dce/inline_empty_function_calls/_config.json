@@ -2,7 +2,7 @@
   "config": {
     "input": [
       {
-        "name": "empty_js",
+        "name": "empty",
         "import": "empty.js"
       },
       {
@@ -34,7 +34,7 @@
         "import": "empty-async.js"
       },
       {
-        "name": "reassign_js",
+        "name": "reassign",
         "import": "reassign.js"
       },
       {

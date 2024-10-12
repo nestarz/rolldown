@@ -2,11 +2,11 @@
   "config": {
     "input": [
       {
-        "name": "element_tsx",
+        "name": "element",
         "import": "element.tsx"
       },
       {
-        "name": "fragment_tsx",
+        "name": "fragment",
         "import": "fragment.tsx"
       },
       {

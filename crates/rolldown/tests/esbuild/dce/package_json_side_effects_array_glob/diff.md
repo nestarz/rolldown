@@ -2,8 +2,8 @@
 ## /out.js
 ### esbuild
 ```js
-// node_modules/pkg/main.js
-console.log("SUCCESS");
+// Users/user/project/node_modules/demo-pkg/keep/this/file.js
+console.log("this should be kept");
 ```
 ### rolldown
 ```js
@@ -15,6 +15,6 @@ console.log("SUCCESS");
 --- esbuild	/out.js
 +++ rolldown	
 @@ -1,1 +0,0 @@
--console.log("SUCCESS");
+-console.log("this should be kept");
 
 ```

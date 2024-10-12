@@ -2,10 +2,11 @@
 ## /out.js
 ### esbuild
 ```js
-// entry.ts
-function foo() {
-}
-foo();
+// Users/user/project/node_modules/demo-pkg/index.js
+console.log("hello");
+
+// Users/user/project/src/entry.js
+console.log("unused import");
 ```
 ### rolldown
 ```js
@@ -17,7 +18,7 @@ foo();
 --- esbuild	/out.js
 +++ rolldown	
 @@ -1,2 +0,0 @@
--function foo() {}
--foo();
+-console.log("hello");
+-console.log("unused import");
 
 ```

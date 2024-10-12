@@ -23,7 +23,7 @@ x();
 
 //#endregion
 ```
-## function_js.js
+## function.js
 
 ```js
 
@@ -41,7 +41,7 @@ x();
 
 //#endregion
 ```
-## let_js.js
+## let.js
 
 ```js
 
@@ -57,7 +57,7 @@ x();
 
 //#endregion
 ```
-## nested_js.js
+## nested.js
 
 ```js
 
