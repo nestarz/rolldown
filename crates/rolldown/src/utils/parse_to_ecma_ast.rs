@@ -62,7 +62,8 @@ pub fn parse_to_ecma_ast(
       }
     }
     ModuleType::Json => {
-      let content = json_to_esm(&source.try_into_string()?)?;
+      has_lazy_export = true;
+      let content = format!("({})", source.try_into_string()?);
       (content, OxcParseType::Js)
     }
     ModuleType::Text => {

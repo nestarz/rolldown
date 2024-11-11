@@ -1,5 +1,5 @@
 # Reason
-1. Wrong output
+1. rolldown can't disable code splitting
 # Diff
 ## /out/a.js
 ### esbuild

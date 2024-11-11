@@ -1,5 +1,5 @@
 # Reason
-1. should inline variable
+1. should transform `__proto__` as a computed property above es5
 # Diff
 ## /out.js
 ### esbuild
