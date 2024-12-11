@@ -5,7 +5,7 @@
   "homepage": "https://rolldown.rs/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rolldown/rolldown.git",
+    "url": "git+https://github.com/nestarz/rolldown.git",
     "directory": "packages/rolldown"
   },
   "license": "MIT",
