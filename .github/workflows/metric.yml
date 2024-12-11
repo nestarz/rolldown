@@ -63,7 +63,7 @@ jobs:
 
       - name: Install dependencies and push metric
         run: |
-          pnpm install -r
+          pnpm install --no-frozen-lockfile -r
           node ./scripts/compile-time-and-binary-size.mjs
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
