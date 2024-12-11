@@ -1,6 +1,6 @@
 {
-  "name": "rolldown",
-  "version": "0.15.0",
+  "name": "@rolldown-deno-fork/rolldown",
+  "version": "0.15.0-fork.1",
   "description": "Fast JavaScript/TypeScript bundler in Rust with Rollup-compatible API.",
   "homepage": "https://rolldown.rs/",
   "repository": {
@@ -137,17 +137,17 @@
     "zod-to-json-schema": "^3.23.2"
   },
   "optionalDependencies": {
-    "@rolldown/binding-darwin-arm64": "workspace:*",
-    "@rolldown/binding-darwin-x64": "workspace:*",
-    "@rolldown/binding-freebsd-x64": "workspace:*",
-    "@rolldown/binding-linux-arm-gnueabihf": "workspace:*",
-    "@rolldown/binding-linux-arm64-gnu": "workspace:*",
-    "@rolldown/binding-linux-arm64-musl": "workspace:*",
-    "@rolldown/binding-linux-x64-gnu": "workspace:*",
-    "@rolldown/binding-linux-x64-musl": "workspace:*",
-    "@rolldown/binding-wasm32-wasi": "workspace:*",
-    "@rolldown/binding-win32-arm64-msvc": "workspace:*",
-    "@rolldown/binding-win32-ia32-msvc": "workspace:*",
-    "@rolldown/binding-win32-x64-msvc": "workspace:*"
+    "@rolldown-deno-fork/binding-darwin-arm64": "workspace:*",
+    "@rolldown-deno-fork/binding-darwin-x64": "workspace:*",
+    "@rolldown-deno-fork/binding-freebsd-x64": "workspace:*",
+    "@rolldown-deno-fork/binding-linux-arm-gnueabihf": "workspace:*",
+    "@rolldown-deno-fork/binding-linux-arm64-gnu": "workspace:*",
+    "@rolldown-deno-fork/binding-linux-arm64-musl": "workspace:*",
+    "@rolldown-deno-fork/binding-linux-x64-gnu": "workspace:*",
+    "@rolldown-deno-fork/binding-linux-x64-musl": "workspace:*",
+    "@rolldown-deno-fork/binding-wasm32-wasi": "workspace:*",
+    "@rolldown-deno-fork/binding-win32-arm64-msvc": "workspace:*",
+    "@rolldown-deno-fork/binding-win32-ia32-msvc": "workspace:*",
+    "@rolldown-deno-fork/binding-win32-x64-msvc": "workspace:*"
   }
 }

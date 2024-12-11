@@ -1,6 +1,6 @@
 {
-  "name": "@rolldown/binding-linux-x64-musl",
-  "version": "0.15.0",
+  "name": "@rolldown-deno-fork/binding-linux-x64-musl",
+  "version": "0.15.0-forks.1",
   "cpu": [
     "x64"
   ],

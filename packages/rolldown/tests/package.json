@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "cross-env": "^7.0.3",
-    "rolldown": "workspace:*",
+    "@rolldown-deno-fork/rolldown": "workspace:*",
     "vite": "^6.0.0",
     "vitest": "^2.0.0"
   }

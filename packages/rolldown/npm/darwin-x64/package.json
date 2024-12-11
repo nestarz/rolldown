@@ -1,6 +1,6 @@
 {
-  "name": "@rolldown/binding-darwin-x64",
-  "version": "0.15.0",
+  "name": "@rolldown-deno-fork/binding-darwin-x64",
+  "version": "0.15.0-forks.1",
   "cpu": [
     "x64"
   ],

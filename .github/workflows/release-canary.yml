@@ -14,7 +14,7 @@ concurrency:
 jobs:
   plan:
     name: Plan release
-    if: github.repository == 'rolldown/rolldown'
+    if: github.repository == 'nestarz/rolldown'
     runs-on: ubuntu-latest
     outputs:
       npm-tag: ${{ github.event_name == 'schedule' && 'nightly' || 'canary' }}
@@ -23,12 +23,12 @@ jobs:
 
   build:
     name: Build bindings and node packages
-    if: github.repository == 'rolldown/rolldown'
+    if: github.repository == 'nestarz/rolldown'
     uses: ./.github/workflows/reusable-release-build.yml
 
   publish:
     name: Publish npm Packages
-    if: github.repository == 'rolldown/rolldown'
+    if: github.repository == 'nestarz/rolldown'
     runs-on: ubuntu-latest
     permissions:
       contents: write # for softprops/action-gh-release@v1
