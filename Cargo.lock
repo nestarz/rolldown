@@ -1834,8 +1834,7 @@ dependencies = [
 [[package]]
 name = "oxc_resolver"
 version = "2.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da33ec82d0f4770f4b5c120d6a1d8e45de2d99ae2672a7ee6bd29092ada945f2"
+source = "git+https://github.com/oxc-project/oxc-resolver.git?branch=12-11-feat_replace_filesystem_canonicalize_with_filesystem_read_link_#bc5b872b75895309c36a0bbf0d5d77abe3e4786a"
 dependencies = [
  "cfg-if",
  "dashmap 6.1.0",
