@@ -6,7 +6,7 @@
     "build": "rolldown --config ./rolldown.config.js"
   },
   "devDependencies": {
-    "rolldown": "workspace:*"
+    "@rolldown-deno-fork/rolldown": "workspace:*"
   },
   "dependencies": {
     "vue": "^3.4.21"

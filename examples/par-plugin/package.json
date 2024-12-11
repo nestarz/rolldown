@@ -9,7 +9,7 @@
     "build": "echo success"
   },
   "devDependencies": {
-    "rolldown": "workspace:*",
+    "@rolldown-deno-fork/rolldown": "workspace:*",
     "@babel/core": "^7.24.4",
     "@babel/preset-env": "^7.24.4",
     "@babel/preset-typescript": "^7.24.1"
