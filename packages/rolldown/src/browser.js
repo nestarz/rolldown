@@ -1,1 +1,1 @@
-export * from '@rolldown/binding-wasm32-wasi'
+export * from '@rolldown-deno-fork/binding-wasm32-wasi'

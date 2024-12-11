@@ -76,7 +76,7 @@
   },
   "napi": {
     "binaryName": "rolldown-binding",
-    "packageName": "@rolldown/binding",
+    "packageName": "@rolldown-deno-fork/binding",
     "targets": [
       "x86_64-apple-darwin",
       "x86_64-pc-windows-msvc",
@@ -114,7 +114,7 @@
     "@jridgewell/sourcemap-codec": "^1.5.0",
     "@napi-rs/cli": "^3.0.0-alpha.60",
     "@napi-rs/wasm-runtime": "^0.2.4",
-    "@rolldown/testing": "workspace:*",
+    "@rolldown-deno-fork/testing": "workspace:*",
     "@types/fs-extra": "^11.0.4",
     "@types/lodash-es": "^4.17.12",
     "colorette": "^2.0.20",

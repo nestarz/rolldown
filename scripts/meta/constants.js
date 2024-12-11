@@ -1,6 +1,6 @@
 import * as selfExports from './constants.js'
 // oxlint-disable
-import { workspaceRoot } from '@rolldown/testing'
+import { workspaceRoot } from '@rolldown-deno-fork/testing'
 
 export const REPO_ROOT = workspaceRoot()
 

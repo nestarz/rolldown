@@ -5,7 +5,7 @@ import {
 } from 'rolldown'
 import nodePath from 'node:path'
 import assert from 'node:assert'
-import { workspaceRoot } from '@rolldown/testing'
+import { workspaceRoot } from '@rolldown-deno-fork/testing'
 
 export function getOutputChunkNames(output: RollupOutput) {
   return output.output

@@ -5,7 +5,7 @@ import * as esbuild from 'esbuild'
 /** @returns {import('rolldown').Plugin} */
 export const plugin = () => {
   return {
-    name: '@rolldown/plugin-esbuild',
+    name: '@rolldown-deno-fork/plugin-esbuild',
     transform(code, id) {
       const ext = nodePath.extname(id)
       if (ext === '.ts' || ext === '.tsx') {
@@ -34,7 +34,7 @@ export const plugin = () => {
 /** @returns {import('rolldown').Plugin} */
 export const pluginAsync = () => {
   return {
-    name: '@rolldown/plugin-esbuild',
+    name: '@rolldown-deno-fork/plugin-esbuild',
     async transform(code, id) {
       const ext = nodePath.extname(id)
       if (ext === '.ts' || ext === '.tsx') {
