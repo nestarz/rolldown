@@ -10,7 +10,7 @@ use oxc::transformer::{
   TransformOptions, Transformer,
 };
 
-use rolldown_common::{ESTarget, NormalizedBundlerOptions};
+use rolldown_common::{ESTarget, Jsx, NormalizedBundlerOptions};
 use rolldown_ecmascript::{EcmaAst, WithMutFields};
 use rolldown_error::{BuildDiagnostic, BuildResult, Severity};
 
@@ -31,7 +31,7 @@ pub struct PreProcessEcmaAst {
 
 impl PreProcessEcmaAst {
   // #[allow(clippy::match_same_arms)]: `OxcParseType::Tsx` will have special logic to deal with ts compared to `OxcParseType::Jsx`
-  #[allow(clippy::match_same_arms)]
+  #[allow(clippy::match_same_arms, clippy::too_many_lines)]
   pub fn build(
     &mut self,
     mut ast: EcmaAst,
@@ -71,20 +71,27 @@ impl PreProcessEcmaAst {
       }
     });
     // Transform TypeScript and jsx.
+    // Transform es syntax.
     if !matches!(parse_type, OxcParseType::Js) || !matches!(bundle_options.target, ESTarget::EsNext)
     {
       let ret = ast.program.with_mut(|fields| {
         let target: OxcESTarget = bundle_options.target.into();
         let mut transformer_options = TransformOptions::from(target);
-        match parse_type {
-          OxcParseType::Js => {}
-          OxcParseType::Jsx | OxcParseType::Tsx => {
-            transformer_options.jsx.jsx_plugin = true;
+
+        if !matches!(parse_type, OxcParseType::Js) {
+          // The oxc jsx_plugin is enabled by default, we need to disable it.
+          transformer_options.jsx.jsx_plugin = false;
+
+          match &bundle_options.jsx {
+            Jsx::Disable => unreachable!("Jsx::Disable should be failed at parser."),
+            Jsx::Preserve => {}
+            Jsx::Enable(jsx) => {
+              transformer_options.jsx = jsx.clone();
+              if matches!(parse_type, OxcParseType::Tsx | OxcParseType::Jsx) {
+                transformer_options.jsx.jsx_plugin = true;
+              }
+            }
           }
-          OxcParseType::Ts => {}
-        }
-        if let Some(jsx) = &bundle_options.jsx {
-          transformer_options.jsx = jsx.clone();
         }
 
         Transformer::new(fields.allocator, Path::new(path), &transformer_options)
@@ -132,12 +139,12 @@ impl PreProcessEcmaAst {
       if bundle_options.treeshake.enabled() && !has_lazy_export {
         // Perform dead code elimination.
         // NOTE: `CompressOptions::dead_code_elimination` will remove `ParenthesizedExpression`s from the AST.
-        let compressor = Compressor::new(allocator, CompressOptions::dead_code_elimination());
+        let compressor = Compressor::new(allocator, CompressOptions::all_false());
         if self.ast_changed {
           let semantic_ret = SemanticBuilder::new().with_stats(self.stats).build(program);
           (symbols, scopes) = semantic_ret.semantic.into_symbol_table_and_scope_tree();
         }
-        compressor.build_with_symbols_and_scopes(symbols, scopes, program);
+        compressor.dead_code_elimination_with_symbols_and_scopes(symbols, scopes, program);
       }
 
       Ok(())

@@ -1,7 +1,7 @@
 import { unimplemented } from './misc'
+import { transformRenderedChunk } from './transform-rendered-chunk'
 import type { BindingOutputOptions } from '../binding'
 import type { OutputOptions } from '../options/output-options'
-import { transformRenderedChunk } from './transform-rendered-chunk'
 
 export function bindingifyOutputOptions(
   outputOptions: OutputOptions,
@@ -28,6 +28,7 @@ export function bindingifyOutputOptions(
     globals,
     file,
   } = outputOptions
+
   return {
     dir,
     // Handle case: rollup/test/sourcemaps/samples/sourcemap-file-hashed/_config.js
@@ -58,6 +59,7 @@ export function bindingifyOutputOptions(
     inlineDynamicImports: outputOptions.inlineDynamicImports,
     advancedChunks: outputOptions.advancedChunks,
     polyfillRequire: outputOptions.polyfillRequire,
+    target: outputOptions.target,
   }
 }
 

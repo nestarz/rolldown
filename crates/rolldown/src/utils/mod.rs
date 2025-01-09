@@ -2,18 +2,17 @@ use oxc::ast::VisitMut;
 use rolldown_common::NormalModule;
 use rolldown_ecmascript::EcmaAst;
 use rolldown_ecmascript_utils::{AstSnippet, TakeIn};
+use rustc_hash::FxHashSet;
 
 use super::module_finalizers::scope_hoisting::{
   ScopeHoistingFinalizer, ScopeHoistingFinalizerContext,
 };
 pub mod apply_inner_plugins;
 pub mod augment_chunk_hash;
-pub mod call_expression_ext;
 pub mod chunk;
 pub mod ecma_visitors;
 pub mod extract_meaningful_input_name_from_path;
 pub mod load_source;
-pub mod make_ast_symbol_and_scope;
 pub mod normalize_options;
 pub mod parse_to_ecma_ast;
 pub mod pre_process_ecma_ast;
@@ -39,6 +38,8 @@ pub fn finalize_normal_module(
       scope: &module.scope,
       snippet: AstSnippet::new(alloc),
       comments: oxc_program.comments.take_in(alloc),
+      namespace_alias_symbol_id: FxHashSet::default(),
+      interested_namespace_alias_ref_id: FxHashSet::default(),
     };
     finalizer.visit_program(oxc_program);
     oxc_program.comments = finalizer.comments.take_in(alloc);

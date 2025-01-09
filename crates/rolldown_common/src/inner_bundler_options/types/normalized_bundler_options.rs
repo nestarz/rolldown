@@ -4,13 +4,14 @@
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use oxc::transformer::{InjectGlobalVariablesConfig, JsxOptions};
+use oxc::transformer::InjectGlobalVariablesConfig;
 use rustc_hash::{FxHashMap, FxHashSet};
 
 use super::advanced_chunks_options::AdvancedChunksOptions;
 use super::checks_options::ChecksOptions;
 use super::comments::Comments;
 use super::experimental_options::ExperimentalOptions;
+use super::jsx::Jsx;
 use super::output_option::ChunkFilenamesOutputOption;
 use super::target::ESTarget;
 use super::treeshake::TreeshakeOptions;
@@ -45,7 +46,10 @@ pub struct NormalizedBundlerOptions {
   pub entry_filenames: ChunkFilenamesOutputOption,
   pub chunk_filenames: ChunkFilenamesOutputOption,
   pub asset_filenames: FilenameTemplate,
-  pub dir: String,
+  // The user specified output directory config
+  pub dir: Option<String>,
+  // The rolldown resolved output directory from `dir` or `file`.
+  pub out_dir: String,
   pub file: Option<String>,
   pub format: OutputFormat,
   pub exports: OutputExports,
@@ -72,7 +76,7 @@ pub struct NormalizedBundlerOptions {
   pub advanced_chunks: Option<AdvancedChunksOptions>,
   pub checks: ChecksOptions,
   pub profiler_names: bool,
-  pub jsx: Option<JsxOptions>,
+  pub jsx: Jsx,
   pub watch: WatchOption,
   pub comments: Comments,
   pub drop_labels: FxHashSet<String>,

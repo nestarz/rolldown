@@ -84,7 +84,7 @@ export declare class BindingOutputChunk {
   get moduleIds(): Array<string>
   get exports(): Array<string>
   get fileName(): string
-  get modules(): Record<string, BindingRenderedModule>
+  get modules(): BindingModules
   get imports(): Array<string>
   get dynamicImports(): Array<string>
   get code(): string
@@ -151,6 +151,19 @@ export declare class ParallelJsPluginRegistry {
   id: number
   workerCount: number
   constructor(workerCount: number)
+}
+
+export declare class RenderedChunk {
+  get name(): string
+  get isEntry(): boolean
+  get isDynamicEntry(): boolean
+  get facadeModuleId(): string | null
+  get moduleIds(): Array<string>
+  get exports(): Array<string>
+  get fileName(): string
+  get modules(): BindingModules
+  get imports(): Array<string>
+  get dynamicImports(): Array<string>
 }
 
 export interface AliasItem {
@@ -338,7 +351,7 @@ export interface BindingInputOptions {
   inject?: Array<BindingInjectImportNamed | BindingInjectImportNamespace>
   experimental?: BindingExperimentalOptions
   profilerNames?: boolean
-  jsx?: JsxOptions
+  jsx?: BindingJsx
   watch?: BindingWatchOption
   keepNames?: boolean
   checks?: BindingChecksOptions
@@ -366,6 +379,11 @@ export interface BindingJsWatchChangeEvent {
   event: string
 }
 
+export type BindingJsx =
+  | { type: 'Disable' }
+  | { type: 'Preserve' }
+  | { type: 'Enable', field0: JsxOptions }
+
 export declare enum BindingLogLevel {
   Silent = 0,
   Warn = 1,
@@ -388,6 +406,11 @@ export interface BindingMatchGroup {
 
 export interface BindingModulePreloadPolyfillPluginConfig {
   skip?: boolean
+}
+
+export interface BindingModules {
+  value: Array<BindingRenderedModule>
+  idToIndex: Record<string, number>
 }
 
 export interface BindingModuleSideEffectsRule {
@@ -431,6 +454,7 @@ export interface BindingOutputOptions {
   advancedChunks?: BindingAdvancedChunksOptions
   comments?: 'none' | 'preserve-legal'
   polyfillRequire?: boolean
+  target?: string
 }
 
 export interface BindingPluginContextResolvedId {
@@ -821,19 +845,6 @@ export interface ReactRefreshOptions {
 
 export declare function registerPlugins(id: number, plugins: Array<BindingPluginWithIndex>): void
 
-export interface RenderedChunk {
-  name: string
-  isEntry: boolean
-  isDynamicEntry: boolean
-  facadeModuleId?: string
-  moduleIds: Array<string>
-  exports: Array<string>
-  fileName: string
-  modules: Record<string, BindingRenderedModule>
-  imports: Array<string>
-  dynamicImports: Array<string>
-}
-
 export type Severity =  'Error'|
 'Warning'|
 'Advice';
@@ -892,7 +903,7 @@ export interface TransformOptions {
   /** Configure how TypeScript is transformed. */
   typescript?: TypeScriptOptions
   /** Configure how TSX and JSX are transformed. */
-  jsx?: JsxOptions
+  jsx?: 'preserve' | JsxOptions
   /**
    * Sets the target environment for the generated JavaScript.
    *

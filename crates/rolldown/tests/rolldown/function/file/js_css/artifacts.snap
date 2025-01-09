@@ -4,7 +4,7 @@ snapshot_kind: text
 ---
 # Assets
 
-## out.css
+## dist/out.css
 
 ```css
 body {
@@ -12,9 +12,9 @@ body {
 }
 
 ```
-## out.js
+## out.css
 
-```js
+```css
 
 //#region main.js
 var main_default = "hello, world";

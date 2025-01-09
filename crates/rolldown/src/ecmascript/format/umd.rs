@@ -1,8 +1,8 @@
 use arcstr::ArcStr;
-use rolldown_common::{ChunkKind, ExternalModule, OutputExports, WrapKind};
+use rolldown_common::{ExternalModule, OutputExports};
 use rolldown_error::{BuildDiagnostic, BuildResult};
 use rolldown_sourcemap::SourceJoiner;
-use rolldown_utils::{concat_string, ecmascript::legitimize_identifier_name};
+use rolldown_utils::ecmascript::legitimize_identifier_name;
 
 use crate::{
   ecmascript::{
@@ -13,7 +13,9 @@ use crate::{
     determine_export_mode::determine_export_mode,
     determine_use_strict::determine_use_strict,
     namespace_marker::render_namespace_markers,
-    render_chunk_exports::{get_export_items, render_chunk_exports},
+    render_chunk_exports::{
+      get_chunk_export_names, render_chunk_exports, render_wrapped_entry_chunk,
+    },
   },
 };
 
@@ -22,6 +24,7 @@ use super::utils::{
   render_modules_with_peek_runtime_module_at_first,
 };
 
+#[allow(clippy::too_many_lines)]
 pub async fn render_umd<'code>(
   ctx: &GenerateContext<'_>,
   banner: Option<&'code str>,
@@ -40,9 +43,9 @@ pub async fn render_umd<'code>(
   // umd wrapper start
 
   // Analyze the export information of the chunk.
-  let export_items = get_export_items(ctx.chunk, ctx.link_output);
-  let has_exports = !export_items.is_empty();
-  let has_default_export = export_items.iter().any(|(name, _)| name.as_str() == "default");
+  let export_names = get_chunk_export_names(ctx.chunk, ctx.link_output);
+  let has_exports = !export_names.is_empty();
+  let has_default_export = export_names.iter().any(|name| name.as_str() == "default");
 
   let entry_module = ctx
     .chunk
@@ -50,7 +53,7 @@ pub async fn render_umd<'code>(
     .expect("iife format only have entry chunk");
 
   // We need to transform the `OutputExports::Auto` to suitable `OutputExports`.
-  let export_mode = determine_export_mode(warnings, ctx, entry_module, &export_items)?;
+  let export_mode = determine_export_mode(warnings, ctx, entry_module, &export_names)?;
 
   let named_exports = matches!(&export_mode, OutputExports::Named);
 
@@ -94,7 +97,7 @@ pub async fn render_umd<'code>(
     source_joiner.append_source(intro);
   }
 
-  if named_exports {
+  if named_exports && entry_module.exports_kind.is_esm() {
     if let Some(marker) = render_namespace_markers(ctx.options.es_module, has_default_export, false)
     {
       source_joiner.append_source(marker.to_string());
@@ -108,34 +111,8 @@ pub async fn render_umd<'code>(
     import_code,
   );
 
-  if let ChunkKind::EntryPoint { module: entry_id, .. } = ctx.chunk.kind {
-    let entry_meta = &ctx.link_output.metas[entry_id];
-    match entry_meta.wrap_kind {
-      WrapKind::Esm => {
-        let wrapper_ref = entry_meta.wrapper_ref.as_ref().unwrap();
-        // init_xxx
-        let wrapper_ref_name = ctx.finalized_string_pattern_for_symbol_ref(
-          *wrapper_ref,
-          ctx.chunk_idx,
-          &ctx.chunk.canonical_names,
-        );
-        source_joiner.append_source(concat_string!(wrapper_ref_name, "();"));
-      }
-      WrapKind::Cjs => {
-        let wrapper_ref = entry_meta.wrapper_ref.as_ref().unwrap();
-
-        // require_xxx
-        let wrapper_ref_name = ctx.finalized_string_pattern_for_symbol_ref(
-          *wrapper_ref,
-          ctx.chunk_idx,
-          &ctx.chunk.canonical_names,
-        );
-
-        // return require_xxx();
-        source_joiner.append_source(concat_string!("return ", wrapper_ref_name, "();\n"));
-      }
-      WrapKind::None => {}
-    }
+  if let Some(source) = render_wrapped_entry_chunk(ctx, Some(&export_mode)) {
+    source_joiner.append_source(source);
   }
 
   //  exports
@@ -161,7 +138,7 @@ fn render_amd_dependencies(externals: &[&ExternalModule], has_exports: bool) -> 
   let mut dependencies = Vec::with_capacity(externals.len());
   if has_exports {
     dependencies.reserve(1);
-    dependencies.push("exports".to_string());
+    dependencies.push("'exports'".to_string());
   }
   externals.iter().for_each(|external| {
     dependencies.push(format!("'{}'", external.name.as_str()));

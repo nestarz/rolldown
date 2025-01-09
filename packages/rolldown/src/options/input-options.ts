@@ -1,13 +1,13 @@
-import { RolldownPluginOption } from '../plugin'
-import {
+import type { RolldownPluginOption } from '../plugin'
+import type {
   LogLevel,
   LogLevelOption,
   LogLevelWithError,
   RollupLog,
   RollupLogWithString,
 } from '../log/logging'
-import { TreeshakingOptions } from '../treeshake'
-import { NullValue, StringOrRegExp } from '../types/utils'
+import type { NullValue, StringOrRegExp } from '../types/utils'
+import type { TreeshakingOptions } from '../types/module-side-effects'
 
 export type InputOption = string | string[] | Record<string, string>
 
@@ -36,7 +36,7 @@ export type ModuleTypes = Record<
 >
 
 export interface JsxOptions {
-  mode?: 'classic' | 'automatic'
+  mode?: 'classic' | 'automatic' | 'preserve'
   factory?: string
   fragment?: string
   importSource?: string
@@ -147,7 +147,15 @@ export interface InputOptions {
    */
   inject?: Record<string, string | [string, string]>
   profilerNames?: boolean
-  jsx?: JsxOptions
+  /**
+   * JSX options.
+   * The `false` is disabled jsx parser, it will give you a syntax error if you use jsx syntax
+   * The `mode: preserve` is disabled jsx transformer, it perverse original jsx syntax in the output.
+   * The `mode: classic` is enabled jsx `classic` transformer.
+   * The `mode: automatic` is enabled jsx `automatic` transformer.
+   * @default mode = 'automatic'
+   */
+  jsx?: false | JsxOptions
   watch?: WatchOptions | false
   dropLabels?: string[]
   keepNames?: boolean

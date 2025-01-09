@@ -3,9 +3,9 @@ import type { PreRenderedChunk } from '../binding'
 import {
   SourcemapIgnoreListOption,
   SourcemapPathTransformOption,
-} from '../rollup'
+} from '../types/misc'
 import { RolldownOutputPluginOption } from '../plugin'
-import { RolldownRenderedChunk } from '../types/rolldown-output'
+import { RenderedChunk } from '../types/rolldown-output'
 
 export type ModuleFormat =
   | 'es'
@@ -17,13 +17,25 @@ export type ModuleFormat =
   | 'umd'
   | 'experimental-app'
 
-export type AddonFunction = (
-  chunk: RolldownRenderedChunk,
-) => string | Promise<string>
+export type AddonFunction = (chunk: RenderedChunk) => string | Promise<string>
 
 export type ChunkFileNamesFunction = (chunkInfo: PreRenderedChunk) => string
 
 export type GlobalsFunction = (name: string) => string
+
+export type ESTarget =
+  | 'es6'
+  | 'es2015'
+  | 'es2016'
+  | 'es2017'
+  | 'es2018'
+  | 'es2019'
+  | 'es2020'
+  | 'es2021'
+  | 'es2022'
+  | 'es2023'
+  | 'es2024'
+  | 'esnext'
 
 export interface OutputOptions {
   dir?: string
@@ -79,6 +91,7 @@ export interface OutputOptions {
   comments?: 'none' | 'preserve-legal'
   plugins?: RolldownOutputPluginOption
   polyfillRequire?: boolean
+  target?: ESTarget
 }
 
 interface OverwriteOutputOptionsForCli {

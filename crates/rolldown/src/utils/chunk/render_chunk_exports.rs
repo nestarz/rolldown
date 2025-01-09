@@ -12,13 +12,76 @@ use rolldown_utils::{
   indexmap::FxIndexSet,
 };
 
+pub fn render_wrapped_entry_chunk(
+  ctx: &GenerateContext<'_>,
+  export_mode: Option<&OutputExports>,
+) -> Option<String> {
+  if let ChunkKind::EntryPoint { module: entry_id, .. } = ctx.chunk.kind {
+    let entry_meta = &ctx.link_output.metas[entry_id];
+    match entry_meta.wrap_kind {
+      WrapKind::Esm => {
+        let wrapper_ref = entry_meta.wrapper_ref.as_ref().unwrap();
+        // init_xxx
+        let wrapper_ref_name = ctx.finalized_string_pattern_for_symbol_ref(
+          *wrapper_ref,
+          ctx.chunk_idx,
+          &ctx.chunk.canonical_names,
+        );
+        Some(concat_string!(wrapper_ref_name, "();"))
+      }
+      WrapKind::Cjs => {
+        let wrapper_ref = entry_meta.wrapper_ref.as_ref().unwrap();
+
+        let wrapper_ref_name = ctx.finalized_string_pattern_for_symbol_ref(
+          *wrapper_ref,
+          ctx.chunk_idx,
+          &ctx.chunk.canonical_names,
+        );
+
+        match ctx.options.format {
+          OutputFormat::Esm => {
+            // export default require_xxx();
+            Some(concat_string!("export default ", wrapper_ref_name.as_str(), "();\n"))
+          }
+          OutputFormat::Cjs => {
+            if matches!(&export_mode, Some(OutputExports::Named)) {
+              Some(render_object_define_property(
+                "default",
+                &concat_string!(wrapper_ref_name, "()"),
+              ))
+            } else {
+              // module.exports = require_xxx();
+              Some(concat_string!("module.exports = ", wrapper_ref_name, "();\n"))
+            }
+          }
+          OutputFormat::Iife | OutputFormat::Umd => {
+            if matches!(&export_mode, Some(OutputExports::Named)) {
+              Some(render_object_define_property(
+                "default",
+                &concat_string!(wrapper_ref_name, "()"),
+              ))
+            } else {
+              // return require_xxx();
+              Some(concat_string!("return ", wrapper_ref_name, "();\n"))
+            }
+          }
+          OutputFormat::App => unreachable!(),
+        }
+      }
+      WrapKind::None => None,
+    }
+  } else {
+    None
+  }
+}
+
 #[allow(clippy::too_many_lines)]
 pub fn render_chunk_exports(
   ctx: &GenerateContext<'_>,
-  mut export_mode: Option<&OutputExports>,
+  export_mode: Option<&OutputExports>,
 ) -> Option<String> {
   let GenerateContext { chunk, link_output, options, .. } = ctx;
-  let export_items = get_export_items(chunk, link_output);
+  let export_items = get_export_items(chunk, link_output).into_iter().collect::<Vec<_>>();
 
   match options.format {
     OutputFormat::Esm => {
@@ -61,11 +124,7 @@ pub fn render_chunk_exports(
     OutputFormat::Cjs | OutputFormat::Iife | OutputFormat::Umd => {
       let mut s = String::new();
       match chunk.kind {
-        ChunkKind::EntryPoint { module, is_user_defined, .. } => {
-          if !is_user_defined {
-            // `OutputExports` should only works for user-defined entry points.
-            export_mode = Some(&OutputExports::Named);
-          }
+        ChunkKind::EntryPoint { module, .. } => {
           let module =
             &link_output.module_table.modules[module].as_normal().expect("should be normal module");
           if matches!(module.exports_kind, ExportsKind::Esm) {
@@ -108,18 +167,7 @@ pub fn render_chunk_exports(
                       options,
                       &link_output.module_table.modules,
                     ) {
-                      concat_string!(
-                        "Object.defineProperty(exports, '",
-                        exported_name.as_str(),
-                        "', {
-  enumerable: true,
-  get: function () {
-    return ",
-                        exported_value.as_str(),
-                        ";
-  }
-});"
-                      )
+                      render_object_define_property(&exported_name, &exported_value)
                     } else {
                       concat_string!(
                         property_access_str("exports", exported_name.as_str()),
@@ -166,42 +214,26 @@ pub fn render_chunk_exports(
         });
         }
         ChunkKind::Common => {
-          export_items.into_iter().for_each(|(exported_name, export_ref)| {
-            let canonical_ref = link_output.symbol_db.canonical_ref_for(export_ref);
-            let symbol = link_output.symbol_db.get(canonical_ref);
-            let canonical_name = &chunk.canonical_names[&canonical_ref];
+          let rendered_items = export_items
+            .into_iter()
+            .map(|(exported_name, export_ref)| {
+              let canonical_ref = link_output.symbol_db.canonical_ref_for(export_ref);
+              let symbol = link_output.symbol_db.get(canonical_ref);
+              let canonical_name = &chunk.canonical_names[&canonical_ref];
 
-            if let Some(ns_alias) = &symbol.namespace_alias {
-              let canonical_ns_name = &chunk.canonical_names[&ns_alias.namespace_ref];
-              let property_name = &ns_alias.property_name;
-              s.push_str(&concat_string!(
-                "Object.defineProperty(exports, '",
-                exported_name,
-                "', {
-  enumerable: true,
-  get: function () {
-    return ",
-                canonical_ns_name,
-                ".",
-                property_name,
-                ";\n  }
-});\n"
-              ));
-            } else {
-              s.push_str(&concat_string!(
-                "Object.defineProperty(exports, '",
-                exported_name,
-                "', {
-  enumerable: true,
-  get: function () {
-    return ",
-                canonical_name,
-                ";
-  }
-});"
-              ));
-            };
-          });
+              if let Some(ns_alias) = &symbol.namespace_alias {
+                let canonical_ns_name = &chunk.canonical_names[&ns_alias.namespace_ref];
+                let property_name = &ns_alias.property_name;
+                render_object_define_property(
+                  &exported_name,
+                  &concat_string!(canonical_ns_name, ".", property_name),
+                )
+              } else {
+                render_object_define_property(&exported_name, canonical_name)
+              }
+            })
+            .collect::<Vec<_>>();
+          s.push_str(&rendered_items.join("\n"));
         }
       }
 
@@ -212,6 +244,22 @@ pub fn render_chunk_exports(
     }
     OutputFormat::App => None,
   }
+}
+
+#[inline]
+pub fn render_object_define_property(key: &str, value: &str) -> String {
+  concat_string!(
+    "Object.defineProperty(exports, '",
+    key,
+    "', {
+  enumerable: true,
+  get: function () {
+    return ",
+    value,
+    ";
+  }
+});"
+  )
 }
 
 pub fn get_export_items(chunk: &Chunk, graph: &LinkStageOutput) -> Vec<(Rstr, SymbolRef)> {
@@ -241,23 +289,17 @@ pub fn get_export_items(chunk: &Chunk, graph: &LinkStageOutput) -> Vec<(Rstr, Sy
   }
 }
 
-pub fn get_chunk_export_names(
-  chunk: &Chunk,
-  graph: &LinkStageOutput,
-  options: &NormalizedBundlerOptions,
-) -> Vec<String> {
-  if matches!(options.format, OutputFormat::Esm) {
-    if let ChunkKind::EntryPoint { module: entry_id, .. } = &chunk.kind {
-      let entry_meta = &graph.metas[*entry_id];
-      if matches!(entry_meta.wrap_kind, WrapKind::Cjs) {
-        return vec!["default".to_string()];
-      }
+pub fn get_chunk_export_names(chunk: &Chunk, graph: &LinkStageOutput) -> Vec<Rstr> {
+  if let ChunkKind::EntryPoint { module: entry_id, .. } = &chunk.kind {
+    let entry_meta = &graph.metas[*entry_id];
+    if matches!(entry_meta.wrap_kind, WrapKind::Cjs) {
+      return vec![Rstr::new("default")];
     }
   }
 
   get_export_items(chunk, graph)
     .into_iter()
-    .map(|(exported_name, _)| exported_name.to_string())
+    .map(|(exported_name, _)| exported_name)
     .collect::<Vec<_>>()
 }
 

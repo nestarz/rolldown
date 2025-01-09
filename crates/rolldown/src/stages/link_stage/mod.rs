@@ -1,6 +1,8 @@
 use std::{ptr::addr_of, sync::Mutex};
 
 use oxc_index::IndexVec;
+#[cfg(debug_assertions)]
+use rolldown_common::common_debug_symbol_ref;
 use rolldown_common::{
   dynamic_import_usage::DynamicImportExportsUsage, EntryPoint, ExportsKind, ImportKind,
   ImportRecordIdx, ImportRecordMeta, Module, ModuleIdx, ModuleTable, OutputFormat,
@@ -75,12 +77,16 @@ impl<'a> LinkStage<'a> {
           dependencies: module
             .import_records()
             .iter()
-            .filter_map(|rec| {
-              if options.inline_dynamic_imports || !matches!(rec.kind, ImportKind::DynamicImport) {
-                Some(rec.resolved_module)
-              } else {
-                None
+            .filter_map(|rec| match rec.kind {
+              ImportKind::DynamicImport => {
+                if options.inline_dynamic_imports {
+                  Some(rec.resolved_module)
+                } else {
+                  None
+                }
               }
+              ImportKind::Require => None,
+              _ => Some(rec.resolved_module),
             })
             .collect(),
           star_exports_from_external_modules: module.as_normal().map_or(vec![], |inner| {
@@ -111,6 +117,7 @@ impl<'a> LinkStage<'a> {
     self.determine_module_exports_kind();
     self.wrap_modules();
     self.generate_lazy_export();
+    self.determine_side_effects();
     self.bind_imports_and_exports();
     self.create_exports_for_ecma_modules();
     self.reference_needed_symbols();
@@ -339,7 +346,6 @@ impl<'a> LinkStage<'a> {
                           stmt_info
                             .referenced_symbols
                             .push(importee_linking_info.wrapper_ref.unwrap().into());
-                          // dbg!(&importee_linking_info.wrapper_ref);
                           stmt_info
                             .referenced_symbols
                             .push(self.runtime.resolve_symbol("__toESM").into());
@@ -557,6 +563,15 @@ impl<'a> LinkStage<'a> {
         });
       });
     });
+  }
+
+  /// A helper function used to debug symbol in link process
+  /// given any `SymbolRef` the function will return the string representation of the symbol
+  /// format: `${stable_id} -> ${symbol_name}`
+  #[cfg(debug_assertions)]
+  #[cfg_attr(debug_assertions, allow(unused))]
+  pub fn debug_symbol_ref(&self, symbol_ref: SymbolRef) -> String {
+    common_debug_symbol_ref(symbol_ref, &self.module_table.modules, &self.symbols)
   }
 }
 

@@ -21,7 +21,6 @@
     "scripts/snap-diff/**/*.{txt,md}",
     "packages/rolldown/src/binding.js",
     "/CHANGELOG.md",
-    "/packages/rolldown/src/rollup.d.ts",
     "/crates/rolldown/tests/esbuild/splitting/ignore-test.md",
     "/packages/rollup-tests/src/ignored-by-unsupported-features.md",
     "crates/rolldown/tests/esbuild/**/*",
@@ -145,6 +144,7 @@
     "proto",
     "quasis",
     "realpath",
+    "reexporter",
     "Renamer",
     "renderable",
     "replacen",
@@ -197,6 +197,7 @@
     "unwatch",
     "urlencoding",
     "usize",
+    "valibot",
     "vecmap",
     "vite",
     "vitepress",
@@ -208,7 +209,11 @@
     "Yunfei",
     "कुत्तेपरपानी",
     "पतलूनमे",
-    "मेरेशॉर्ट्सखाओ"
+    "मेरेशॉर्ट्सखाओ",
+    "bluesky",
+    "voidzero",
+    "minifiers",
+    "esmodule"
   ],
   "ignoreWords": ["Jeqs", "Gwetwem", "bpwli", "mxrh"]
 }

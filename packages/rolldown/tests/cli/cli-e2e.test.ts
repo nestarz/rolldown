@@ -1,7 +1,7 @@
 import { describe, test, it, expect } from 'vitest'
 import { $, execa } from 'execa'
 import { stripAnsi } from 'consola/utils'
-import { testsDir } from '@tests/utils'
+import { testsDir, waitUtil } from '@tests/utils'
 import path from 'node:path'
 import fs from 'node:fs'
 
@@ -147,6 +147,47 @@ describe('config', () => {
       expect(status.exitCode).toBe(0)
       expect(cleanStdout(status.stdout)).toMatchSnapshot()
     })
+
+    it('should allow loading ts config from non-working dir', async () => {
+      const cwd = cliFixturesDir()
+      const status = await $({ cwd })`rolldown -c ./ext-ts/rolldown.config.ts`
+      expect(status.exitCode).toBe(0)
+      expect(cleanStdout(status.stdout)).toMatchSnapshot()
+    })
+
+    it('should allow multiply options', async () => {
+      const cwd = cliFixturesDir('config-multiply-options')
+      const status = await $({
+        cwd,
+      })`rolldown -c rolldown.config.ts`
+      expect(status.exitCode).toBe(0)
+      expect(cleanStdout(status.stdout)).toMatchSnapshot()
+    })
+
+    it('should allow multiply output', async () => {
+      const cwd = cliFixturesDir('config-multiply-output')
+      const status = await $({
+        cwd,
+      })`rolldown -c rolldown.config.ts`
+      expect(status.exitCode).toBe(0)
+      expect(cleanStdout(status.stdout)).toMatchSnapshot()
+    })
+
+    it('should resolve rolldown.config.cjs', async () => {
+      const cwd = cliFixturesDir('cli-with-config')
+      const status = await $({ cwd })`rolldown -c`
+      expect(status.exitCode).toBe(0)
+      expect(cleanStdout(status.stdout)).toMatchSnapshot()
+    })
+
+    it('should failed to resolve rolldown.config files', async () => {
+      const cwd = cliFixturesDir('cli-without-config')
+      try {
+        const _ = await $({ cwd })`rolldown -c`
+      } catch (err) {
+        expect(err).not.toBeUndefined()
+      }
+    })
   })
 })
 
@@ -160,11 +201,54 @@ describe('watch cli', () => {
 
   it('should handle output options', async () => {
     const cwd = cliFixturesDir('watch-cli-option')
-    const subprocess = execa({ cwd })`rolldown index.ts -d dist -w -s`
-    setTimeout(() => {
-      subprocess.kill('SIGINT')
+    const controller = new AbortController()
+    execa({
+      cwd,
+      reject: false,
+      cancelSignal: controller.signal,
+    })`rolldown index.ts -d dist -w -s`
+    await waitUtil(() => {
       expect(fs.existsSync(path.join(cwd, 'dist'))).toBe(true)
       expect(fs.existsSync(path.join(cwd, 'dist/index.js.map'))).toBe(true)
-    }, 300)
+    })
+    controller.abort()
+  })
+
+  it('should allow multiply options', async () => {
+    const cwd = cliFixturesDir('config-multiply-options')
+    const controller = new AbortController()
+    execa({
+      cwd,
+      reject: false,
+      cancelSignal: controller.signal,
+    })`rolldown -c rolldown.config.ts -d watch-dist-options -w`
+    await waitUtil(() => {
+      expect(fs.existsSync(path.join(cwd, 'watch-dist-options/esm.js'))).toBe(
+        true,
+      )
+      expect(fs.existsSync(path.join(cwd, 'watch-dist-options/cjs.js'))).toBe(
+        true,
+      )
+    })
+    controller.abort()
+  })
+
+  it('should allow multiply output', async () => {
+    const cwd = cliFixturesDir('config-multiply-output')
+    const controller = new AbortController()
+    execa({
+      cwd,
+      reject: false,
+      cancelSignal: controller.signal,
+    })`rolldown -c rolldown.config.ts -d watch-dist-output -w`
+    await waitUtil(() => {
+      expect(fs.existsSync(path.join(cwd, 'watch-dist-output/esm.js'))).toBe(
+        true,
+      )
+      expect(fs.existsSync(path.join(cwd, 'watch-dist-output/cjs.js'))).toBe(
+        true,
+      )
+    })
+    controller.abort()
   })
 })

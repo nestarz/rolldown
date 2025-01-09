@@ -6,8 +6,8 @@ use rolldown_sourcemap::SourceMap;
 use rustc_hash::FxBuildHasher;
 
 use super::{
-  binding_rendered_chunk::into_binding_chunk_modules,
-  binding_rendered_module::BindingRenderedModule, binding_sourcemap::BindingSourcemap,
+  binding_rendered_chunk::BindingModules, binding_rendered_module::BindingRenderedModule,
+  binding_sourcemap::BindingSourcemap,
 };
 
 // Here using `napi` `getter` fields to avoid the cost of serialize larger data to js side.
@@ -45,7 +45,7 @@ impl BindingOutputChunk {
 
   #[napi(getter)]
   pub fn exports(&self) -> Vec<String> {
-    self.inner.exports.clone()
+    self.inner.exports.iter().map(ToString::to_string).collect()
   }
 
   // RenderedChunk
@@ -55,8 +55,8 @@ impl BindingOutputChunk {
   }
 
   #[napi(getter)]
-  pub fn modules(&self) -> HashMap<String, BindingRenderedModule, FxBuildHasher> {
-    into_binding_chunk_modules(self.inner.modules.clone())
+  pub fn modules(&self) -> BindingModules {
+    (&self.inner.modules).into()
   }
 
   #[napi(getter)]
